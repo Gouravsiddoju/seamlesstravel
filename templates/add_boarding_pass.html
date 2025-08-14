@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Add Boarding Pass{% endblock %}
+{% block content %}
+    <h1>Add Boarding Pass</h1>
+    <form method="POST" action="/add_boarding_pass">
+        <div class="form-group">
+            <label for="flight_number">Flight Number</label>
+            <input type="text" id="flight_number" name="flight_number" required>
+        </div>
+        <div class="form-group">
+            <label for="seat">Seat</label>
+            <input type="text" id="seat" name="seat" required>
+        </div>
+        <div class="form-group">
+            <label for="gate">Gate</label>
+            <input type="text" id="gate" name="gate" required>
+        </div>
+        <div class="form-group">
+            <label for="boarding_time">Boarding Time</label>
+            <input type="datetime-local" id="boarding_time" name="boarding_time" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Boarding Pass</button>
+    </form>
+{% endblock %}

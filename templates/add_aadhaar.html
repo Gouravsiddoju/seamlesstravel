@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Add Aadhaar Card{% endblock %}
+{% block content %}
+    <h1>Add Aadhaar Details</h1>
+    <form method="POST" action="{{ url_for('add_aadhaar') }}">
+        <div class="form-group">
+            <label for="full_name">Full Name</label>
+            <input type="text" id="full_name" name="full_name" required>
+        </div>
+        <div class="form-group">
+            <label for="aadhaar_number">Aadhaar Number</label>
+            <input type="text" id="aadhaar_number" name="aadhaar_number" required>
+        </div>
+        <div class="form-group">
+            <label for="date_of_birth">Date of Birth</label>
+            <input type="date" id="date_of_birth" name="date_of_birth" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Aadhaar</button>
+    </form>
+{% endblock %}

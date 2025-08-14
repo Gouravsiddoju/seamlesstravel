@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Verify Identity{% endblock %}
+{% block content %}
+    <h1>Verify Identity & Scan Passport</h1>
+    <p>Please take a clear photo of your passport and a selfie. Your identity will be cross-verified with the second ID you provided.</p>
+    <form method="POST" action="/verify_identity" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="id_document">Passport Photo</label>
+            <!-- The 'capture' attribute suggests opening the camera on mobile -->
+            <input type="file" id="id_document" name="id_document" accept="image/*" capture="environment" required>
+        </div>
+        <div class="form-group">
+            <label for="selfie">Selfie</label>
+            <input type="file" id="selfie" name="selfie" accept="image/*" capture="user" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit for Verification</button>
+    </form>
+{% endblock %}

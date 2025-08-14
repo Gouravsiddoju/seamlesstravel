@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple QR Code Data Generator with Logo</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- QR Code generation library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for the QR code container */
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border: 1px solid #e5e7eb; /* gray-200 */
+            border-radius: 0.5rem; /* rounded-lg */
+            background-color: white;
+            min-height: 272px; /* Fixed height to prevent layout shift */
+            min-width: 272px;  /* Fixed width */
+        }
+        /* The canvas will be appended here */
+        #qrcode canvas {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg p-6 md:p-8">
+        <!-- Header Section -->
+        <div class="text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Travel Document QR Generator</h1>
+            <p class="text-gray-500 mt-2">Enter details to generate a branded QR code.</p>
+        </div>
+
+        <!-- Input Form -->
+        <div class="space-y-4 mt-6">
+            <div>
+                <label for="passenger-name" class="block text-sm font-medium text-gray-700">Passenger Name</label>
+                <input type="text" id="passenger-name" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="e.g., Alice">
+            </div>
+            <div>
+                <label for="flight-number" class="block text-sm font-medium text-gray-700">Flight Number</label>
+                <input type="text" id="flight-number" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="e.g., BA2490">
+            </div>
+            <div>
+                <label for="seat" class="block text-sm font-medium text-gray-700">Seat</label>
+                <input type="text" id="seat" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="e.g., 14A">
+            </div>
+             <div>
+                <label for="gate" class="block text-sm font-medium text-gray-700">Gate</label>
+                <input type="text" id="gate" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="e.g., B22">
+            </div>
+            <button id="generate-btn" class="w-full bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out shadow-md">
+                Generate QR Code
+            </button>
+        </div>
+
+        <!-- QR Code Display Area -->
+        <div id="qrcode-container">
+            <div id="qrcode">
+                <span class="text-gray-400">Your QR code will appear here</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Element References ---
+        const passengerNameInput = document.getElementById('passenger-name');
+        const flightNumberInput = document.getElementById('flight-number');
+        const seatInput = document.getElementById('seat');
+        const gateInput = document.getElementById('gate');
+        const generateBtn = document.getElementById('generate-btn');
+        const qrcodeContainer = document.getElementById('qrcode');
+
+        // --- Event Listener for the Button ---
+        generateBtn.addEventListener('click', () => {
+            const travelData = {
+                passengerName: passengerNameInput.value,
+                flight: flightNumberInput.value,
+                seat: seatInput.value,
+                gate: gateInput.value,
+                timestamp: new Date().toISOString()
+            };
+            const dataString = JSON.stringify(travelData, null, 2);
+
+            // The logo is now static and defined here.
+            // Using a placeholder image for demonstration. Replace with your actual logo URL.
+            const logoUrl = 'https://thfvnext.bing.com/th/id/OIP.o6w5rOxIrkHh7mkgjUQEmAHaGz?w=212&h=180&c=7&r=0&o=5&cb=thfvnext&dpr=1.2&pid=1.7';
+
+            // Directly call the generation function with the static logo URL.
+            generateQrWithLogo(dataString, logoUrl);
+        });
+
+        function generateQrWithLogo(dataString, logoUrl) {
+            // Clear previous QR code
+            qrcodeContainer.innerHTML = '';
+
+            // Step 1: Generate the base QR code in a temporary, hidden div
+            const tempDiv = document.createElement('div');
+            new QRCode(tempDiv, {
+                text: dataString,
+                width: 256,
+                height: 256,
+                // High error correction is crucial when overlaying a logo
+                correctLevel: QRCode.CorrectLevel.H 
+            });
+
+            // Step 2: Use a short delay to ensure the QR code image has been rendered
+            setTimeout(() => {
+                const qrImgElement = tempDiv.querySelector('img');
+                if (!qrImgElement) {
+                    alert('Could not generate QR code image.');
+                    return;
+                }
+                const qrCodeUrl = qrImgElement.src;
+
+                // Step 3: Create a canvas to merge the QR code and the logo
+                const canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 256;
+                const ctx = canvas.getContext('2d');
+
+                const qrImage = new Image();
+                const logoImage = new Image();
+                
+                // Set cross-origin attribute for the logo to avoid canvas tainting issues
+                logoImage.crossOrigin = "Anonymous";
+
+                // Wait for both images to load before drawing
+                Promise.all([
+                    new Promise(resolve => { qrImage.onload = resolve; qrImage.src = qrCodeUrl; }),
+                    new Promise(resolve => { logoImage.onload = resolve; logoImage.src = logoUrl; })
+                ]).then(() => {
+                    // Draw the QR code onto the canvas
+                    ctx.drawImage(qrImage, 0, 0, 256, 256);
+
+                    // Calculate the size and position for the logo
+                    // The logo will cover about 25% of the QR code area
+                    const logoSize = 64; 
+                    const logoX = (256 - logoSize) / 2;
+                    const logoY = (256 - logoSize) / 2;
+
+                    // Add a white background behind the logo for better readability
+                    ctx.fillStyle = '#ffffff';
+                    // The background is slightly larger than the logo
+                    ctx.fillRect(logoX - 5, logoY - 5, logoSize + 10, logoSize + 10); 
+
+                    // Draw the logo on top
+                    ctx.drawImage(logoImage, logoX, logoY, logoSize, logoSize);
+
+                    // Append the final canvas to the visible container
+                    qrcodeContainer.appendChild(canvas);
+                }).catch(err => {
+                    console.error("Error loading images for canvas:", err);
+                    alert("Could not load images to create the QR code with a logo.");
+                });
+
+            }, 100); // 100ms delay is usually enough
+        }
+    </script>
+</body>
+</html>

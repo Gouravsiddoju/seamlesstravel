@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <h1>Welcome, {{ user.username }}!</h1>
+
+    {% if not user.passport %}
+        <div class="alert alert-info">
+            <p><strong>Step 1: Add your Passport</strong></p>
+            <a href="{{ url_for('add_passport') }}">Enter Passport Details Manually</a>
+        </div>
+    {% elif not user.aadhaar and not user.driving_license %}
+        <div class="alert alert-info">
+            <p><strong>Step 2: Add a second ID document</strong></p>
+            <a href="{{ url_for('add_aadhaar') }}" class="btn btn-primary" style="margin-bottom: 10px;">Add Aadhaar Card</a>
+            <a href="{{ url_for('add_driving_license') }}" class="btn btn-primary">Add Driving License</a>
+        </div>
+    {% elif not user.is_identity_verified %}
+        <div class="alert alert-info">
+            <p><strong>Step 3: Verify your identity</strong></p>
+            <p>Please scan your passport and take a selfie to complete verification.</p>
+            <a href="{{ url_for('verify_identity') }}" class="btn btn-primary">Verify Identity Now</a>
+        </div>
+    {% elif not user.boarding_passes %}
+        <div class="alert alert-info">
+            <p><strong>Step 4: Add your boarding pass</strong></p>
+            <a href="{{ url_for('add_boarding_pass') }}" class="btn btn-primary">Add Boarding Pass</a>
+        </div>
+    {% else %}
+        <div class="alert alert-success">Profile Complete! ✔</div>
+        <p>This is your personal secure QR code.</p>
+        <div style="margin: 20px 0;">
+            <img src="data:image/png;base64,{{ qr_code }}" alt="Your Secure QR Code" style="max-width: 256px; margin: auto; border: 1px solid #ccc; padding: 10px; border-radius: 8px;">
+        </div>
+    {% endif %}
+
+    <p><a href="{{ url_for('logout') }}" style="color: #dc3545;">Logout</a></p>
+{% endblock %}

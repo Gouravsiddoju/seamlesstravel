@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation Result</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h1 { color: #28a745; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px;}
+        .card { background-color: #fafafa; border: 1px solid #e9e9e9; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .card h2 { margin-top: 0; color: #007bff; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .card p { margin: 10px 0; line-height: 1.6; }
+        .card strong { color: #333; }
+        .verified-badge { background-color: #28a745; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em; font-weight: bold; }
+        .not-verified-badge { background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Validation Successful</h1>
+        
+        <div class="card">
+            <h2>Passenger Identity</h2>
+            <p>
+                <strong>Identity Verified:</strong> 
+                {% if user.is_identity_verified %}
+                    <span class="verified-badge">Yes</span>
+                {% else %}
+                    <span class="not-verified-badge">No</span>
+                {% endif %}
+            </p>
+            {% if user.passport %}
+                <p><strong>Full Name:</strong> {{ user.passport.full_name }}</p>
+                <p><strong>Passport No:</strong> {{ user.passport.passport_number }}</p>
+            {% endif %}
+        </div>
+
+        {% if user.aadhaar %}
+        <div class="card">
+            <h2>Secondary ID: Aadhaar</h2>
+            <p><strong>Name:</strong> {{ user.aadhaar.full_name }}</p>
+            <p><strong>Aadhaar No:</strong> {{ user.aadhaar.aadhaar_number }}</p>
+        </div>
+        {% elif user.driving_license %}
+        <div class="card">
+            <h2>Secondary ID: Driving License</h2>
+            <p><strong>Name:</strong> {{ user.driving_license.full_name }}</p>
+            <p><strong>License No:</strong> {{ user.driving_license.license_number }}</p>
+        </div>
+        {% endif %}
+        
+        {% if user.boarding_passes and user.boarding_passes|length > 0 %}
+        <div class="card">
+            <h2>Flight Information</h2>
+            <p><strong>Flight:</strong> {{ user.boarding_passes[0].flight_number }}</p>
+            <p><strong>Seat:</strong> {{ user.boarding_passes[0].seat }}</p>
+            <p><strong>Gate:</strong> {{ user.boarding_passes[0].gate }}</p>
+            <p><strong>Boarding Time:</strong> {{ user.boarding_passes[0].boarding_time.strftime('%I:%M %p') }}</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

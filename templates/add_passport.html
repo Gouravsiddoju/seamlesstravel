@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Add Passport Manually{% endblock %}
+{% block content %}
+    <h1>Add Passport Details</h1>
+    <form method="POST" action="{{ url_for('add_passport') }}">
+        <div class="form-group">
+            <label for="full_name">Full Name (as on passport)</label>
+            <input type="text" id="full_name" name="full_name" required>
+        </div>
+        <div class="form-group">
+            <label for="passport_number">Passport Number</label>
+            <input type="text" id="passport_number" name="passport_number" required>
+        </div>
+        <div class="form-group">
+            <label for="nationality">Nationality</label>
+            <input type="text" id="nationality" name="nationality" required>
+        </div>
+        <div class="form-group">
+            <label for="expiry_date">Expiry Date</label>
+            <input type="date" id="expiry_date" name="expiry_date" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Passport</button>
+    </form>
+{% endblock %}
