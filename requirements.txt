@@ -1,0 +1,13 @@
+flask
+requests
+pandas
+numpy
+sqlalchemy
+gunicorn
+python-dotenv
+Flask-SQLAlchemy
+Flask-Login
+qrcode[pil]
+Werkzeug
+pytesseract
+Pillow
